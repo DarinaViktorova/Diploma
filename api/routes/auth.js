@@ -27,7 +27,6 @@ router.post("/register", async (request, response) => {
 });
 
 //Login
-
 router.post("/login", async (request, response) => {
     try {
         const user = await User.findOne({ email: request.body.email });
@@ -44,7 +43,7 @@ router.post("/login", async (request, response) => {
     } catch (error) {
         response.status(500).json(error);
     }
-})
+});
 
 // Login ver 1
 // router.post("/login", async (request, response) => {
@@ -60,5 +59,14 @@ router.post("/login", async (request, response) => {
 //         response.status(500).json(error);
 //     }
 // })
+
+// Logout
+router.get("/logout", (request, response) => {
+    response.cookie("userToken", null, {
+        httpOnly: true,
+        expires: new Date(0),
+    });
+    response.redirect("/login");
+});
 
 module.exports = router;

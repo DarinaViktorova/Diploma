@@ -1,12 +1,12 @@
 import "./rightbar.css";
 import { Users } from "../../dummyData";
 import Online from "../online/Online";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { Add, Remove } from "@material-ui/icons";
+import { Add, Remove, Message } from "@material-ui/icons";
 
 
 const Rightbar = ({ user }) => {
@@ -14,7 +14,9 @@ const Rightbar = ({ user }) => {
   const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
   const {user: currentUser, dispatch} = useContext(AuthContext);
-  const [followed, setFollowed] = useState(currentUser.followings.includes(user?.id));
+  const [followed, setFollowed] = useState(currentUser?.followings?.includes(user?.id));
+  const [isLoading, setIsLoading] = useState(false);
+  const history = useHistory();
 
   useEffect(() => {
     const getFriends = async () => {
@@ -48,6 +50,17 @@ const Rightbar = ({ user }) => {
     }
   };
   
+  const handleClickMessage = async () => {
+    try {
+      const response = await axios.post("/conversations", {
+        senderId: currentUser._id,
+        receiverId: user._id,
+      });
+      history.push(`/chat/messages/${response.data._id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const HomeRightbar = () => {
     return (
@@ -72,12 +85,17 @@ const Rightbar = ({ user }) => {
   const ProfileRightbar = () => {
     return (
       <>
-      {user.username !== currentUser.username && (
-        <button className="rightbarFollowButton" onClick={handleClickFollow}>
-          {followed ? "Follow" : "Unollow"}
-          {followed ? <Add/> : <Remove/>}
-        </button>
-      )}
+        {user.username !== currentUser.username && (
+          <>
+            <button className="rightbarFollowButton" onClick={handleClickFollow}>
+              {followed ? "Unfollow" : "Follow"}
+              {followed ? <Remove /> : <Add />}
+            </button>
+            <button className="rightbarFollowButton" onClick={handleClickMessage}> 
+              Message <Message />
+            </button>
+          </>
+        )}
         <h4 className="rightbarTitle"> User info</h4>
         <div className="rightbarInfo">
           <div className="rightbarInfoItem">

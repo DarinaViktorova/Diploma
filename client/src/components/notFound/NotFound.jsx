@@ -1,13 +1,17 @@
 import sadCatImage from "./sad_cat.png";
+import Topbar from "../topbar/Topbar";
 
 const NotFound = () => {
     return (
+      <>
+      <Topbar/>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 70px)' }}>
         <div style={{ textAlign: 'center' }}>
-          <img src={sadCatImage} alt="Page not found" style={{ maxWidth: '50%', height: 'auto' }} />
+          <img src={sadCatImage} alt="Page not found" style={{ maxWidth: '70%', height: 'auto' }} />
           <h2 style={{ color: '#6c757d' }}>404 | Not Found ...</h2>
         </div>
       </div>
+      </>
     );
   };
   

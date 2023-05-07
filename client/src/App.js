@@ -11,6 +11,7 @@ import Profile from "./pages/profile/Profile";
 import NotFound from './components/notFound/NotFound';
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
+import Chat from './pages/chat/Chat';
 
 
 function App() {
@@ -28,6 +29,9 @@ function App() {
         </Route>
         <Route path="/register">
         {user ? <Redirect to="/" /> : <Register/>}
+        </Route>
+        <Route  path="/chat">
+          {user ? <Chat/> : <Login/>}
         </Route>
         <Route path="/profile/:username">
           <Profile/>
