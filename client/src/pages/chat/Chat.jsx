@@ -10,6 +10,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import {io} from "socket.io-client";
 
+
 const Chat = () => {
 
   const { user } = useContext(AuthContext);
@@ -77,37 +78,7 @@ const Chat = () => {
     getMessages();
   }, [currentChat]);
   
-  /* SEARCH FOR CONVERSATION */
-
-  // const handleSearch = async (e) => {
-  //   e.preventDefault();
-  //   if (username.trim()) {
-  //     try {
-  //       const response = await axios.get("/api/users", {
-  //         params: { username },
-  //       });
-  //       const user = response.data;
-  //       const existingConversation = conversations.find((c) =>
-  //         c.members.includes(user._id)
-  //       );
-  //       if (existingConversation) {
-  //         setCurrentChat(existingConversation);
-  //       } else {
-  //         const { data } = await axios.post("/api/conversations", {
-  //           members: [user._id, currentUser._id],
-  //         });
-  //         setConversations([...conversations, data]);
-  //         setCurrentChat(data);
-  //       }
-  //       setUsername("");
-  //     } catch (error) {
-  //       alert("This user doesn't exist");
-  //     }
-  //   } else {
-  //     alert("Please enter a username");
-  //   }
-  // };
-
+ 
 /**----------------------------------------------------------------------- */
   const handleSend = async (e) => {
     e.preventDefault();
@@ -146,12 +117,7 @@ const Chat = () => {
       <div className="chat">
         <div className="chatMenu">
           <div className="chatMenuWrapper">
-            <input
-              className="chatMenuInput"
-              type="text"
-              placeholder="Search for friends"
-            />
-            {/* <button onClick={handleSearch}>Search</button> */}
+            <h1>Conversations</h1>
             {conversations.map(conv => (
               <div key={conv._id} onClick={() => setCurrentChat(conv)}>
                 <Conversation conversation={conv}  currentUser={user} />
@@ -184,7 +150,9 @@ const Chat = () => {
                 ></textarea>
               <button className="chatSubmitButton" onClick={handleSend}><SendRounded /></button>
             </div>
-            </> : <span className="noConversationText">Open a conversation to start a chat</span>
+            </> : <div className="messageStartContainer">
+                <span className="noConversationText">Open a conversation to start a chat</span>
+              </div>
             }
           </div>
         </div>

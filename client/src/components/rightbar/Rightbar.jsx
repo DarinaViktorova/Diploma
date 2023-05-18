@@ -96,7 +96,7 @@ const Rightbar = ({ user }) => {
             </button>
           </>
         )}
-        <h4 className="rightbarTitle"> User info</h4>
+        <span className="rightbarTitle"> {user.username} info</span>
         <div className="rightbarInfo">
           <div className="rightbarInfoItem">
             <span className="rightbarInfoKey">City:</span>
@@ -131,8 +131,6 @@ const Rightbar = ({ user }) => {
             </div>
             </Link>
           ))}
-         
-
         </div>
       </>
     )

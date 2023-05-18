@@ -1,23 +1,42 @@
 import "./topbar.css";
 import { Link } from "react-router-dom";
-import { Search, Person, Chat, Notifications, ExitToAppRounded } from "@material-ui/icons";
-import { useContext, useState } from "react";
+import { Search, HomeOutlined, MailOutline, ExitToAppRounded } from "@material-ui/icons";
+import { useContext, useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { Logout } from "../../context/AuthActions";
-import NotFound from "../notFound/NotFound";
+import { logoutCall } from '../../apiCalls'
 import axios from "axios";
+import {io} from "socket.io-client";
+import { useEffect } from "react";
+
 
 const Topbar = () => {
 
     const { user, dispatch } = useContext(AuthContext);
     const [searchQuery, setSearchQuery] = useState("");
+   // const [unreadCount, setUnreadCount] = useState(0);
     const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
     const history = useHistory();
 
+
+    // const socket = useRef();
+
+    // useEffect(() => {
+    //     socket.current = io("ws://localhost:8900");
+    //     socket.current.on("unreadCount", (newCount) => {
+    //         setUnreadCount(newCount);
+    //     })
+    // }, []);
+
+    // const updateUnreadCount = (newCount) => {
+
+    // }
+
+
     const handleLogout = () => {
-        dispatch(Logout());
-    };
+        logoutCall(dispatch);
+        history.push("/login");
+    }
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -43,37 +62,31 @@ const Topbar = () => {
             </div>
             <div className="topbarCenter">
                 <form className="searchBar">
-                    <Search className="searchIcon" />
+                    {/* <Search className="searchIcon" /> */}
                     <input
                         type="text"
                         className="searchInput"
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search for friend, post or video"
+                        placeholder="Search for friend..."
                     />
-                        <button type="submit" onClick={handleSearch}>Search</button>
+                        <button type="submit" className="searchButton" onClick={handleSearch}>Search</button>
                 </form>
             </div>
             <div className="topbarRight">
                 <div className="topbarLinks">
-                    <Link to="/" style={{ textDecoration: "none", color: "white", cursor: "pointer" }}>
-                        <span className="topbarLink">Homepage</span>
+                    <Link to="/" style={{ textDecoration: "none", color: "yellow", cursor: "pointer" }}>
+                        <HomeOutlined />
                     </Link>
                 </div>
                 <div className="topbarIcons">
-                    <div className="topbarIconItem">
-                        <Person />
-                        <span className="topbarIconBadge">1</span>
-                    </div>
+
                     <Link to="/chat" style={{ textDecoration: "none", color: "white", cursor: "pointer"}}>
                         <div className="topbarIconItem">
-                            <Chat />
+                            <MailOutline style={{"color":"yellow"}}/>
                             <span className="topbarIconBadge">1</span>
                         </div>
                     </Link>
-                    <div className="topbarIconItem">
-                        <Notifications />
-                        <span className="topbarIconBadge">1</span>
-                    </div>
+
 
                 </div>
                 <Link to={`/profile/${user.username}`}>
@@ -86,7 +99,7 @@ const Topbar = () => {
                 </Link>
 
                 <div className="topbarIconItem" onClick={handleLogout}>
-                    <ExitToAppRounded />
+                    <ExitToAppRounded style={{"color":"yellow"}}/>
                 </div>
 
             </div>

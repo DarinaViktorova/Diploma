@@ -1,5 +1,4 @@
 import Topbar from '../../components/topbar/Topbar';
-import Sidebar from '../../components/sidebar/Sidebar';
 import Feed from '../../components/feed/Feed';
 import Rightbar from '../../components/rightbar/Rightbar';
 import { useEffect, useState } from 'react';
@@ -26,7 +25,6 @@ const Profile = () => {
     <>
       <Topbar />
       <div className="profile">
-        <Sidebar />
         <div className="profileRight">
           <div className="profileRightTop">
             <div className="profileCover">
@@ -51,7 +49,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="profileRightBottom">
-            <Feed username={username} />
+            <Feed username={username}/>
             <Rightbar user={user} />
           </div>
         </div>

@@ -8,7 +8,7 @@ import { format } from "timeago.js";
 import axios from "axios";
 import "./post.css";
 import { AuthContext } from "../../context/AuthContext";
-import {io} from "socket.io-client";
+import { io } from "socket.io-client";
 
 
 const Post = ({ post }) => {
@@ -98,38 +98,38 @@ const Post = ({ post }) => {
   /** DELETE / UPDATE THE POST CAN ONLY AUTHOR */
 
   const handleDelete = async () => {
-      // Проверяем, что текущий пользователь является автором поста
-      if (currentUser._id === post.userId) {
-        try{
-          await axios.delete(`/posts/${ post._id }`, {
-            data: { userId: currentUser._id },
-          });
-          // Если удаление прошло успешно, удаляем пост из состояния (state)
-          setIsDeleted(true);
-          window.location.reload();
-        } catch (error) {}
-      }
+    // Проверяем, что текущий пользователь является автором поста
+    if (currentUser._id === post.userId) {
+      try {
+        await axios.delete(`/posts/${post._id}`, {
+          data: { userId: currentUser._id },
+        });
+        // Если удаление прошло успешно, удаляем пост из состояния (state)
+        setIsDeleted(true);
+        window.location.reload();
+      } catch (error) { }
+    }
   };
 
   // Проверяем, что текущий пользователь является автором поста
   useEffect(() => {
     currentUser._id === post.userId && setIsCurrentUser(true);
-    }, [currentUser._id, post.userId]);
+  }, [currentUser._id, post.userId]);
 
 
-    useEffect(() => {
-      if (isDeleted) {
-        // Загружаем обновленные данные из сервера и обновляем состояние компонента
-        axios.get(`/posts/${ post._id }`)
-          .then(res => {
-            // Обновляем состояние компонента, чтобы он перерендерился с новыми данными
-            setIsDeleted(false);
-            setPosts(res.data);
-          })
-          .catch(error => console.error(error));
-      }
-    }, [isDeleted, post._id]);
-  
+  useEffect(() => {
+    if (isDeleted) {
+      // Загружаем обновленные данные из сервера и обновляем состояние компонента
+      axios.get(`/posts/${post._id}`)
+        .then(res => {
+          // Обновляем состояние компонента, чтобы он перерендерился с новыми данными
+          setIsDeleted(false);
+          setPosts(res.data);
+        })
+        .catch(error => console.error(error));
+    }
+  }, [isDeleted, post._id]);
+
 
   return (
 
@@ -159,28 +159,12 @@ const Post = ({ post }) => {
             <span className="postDate">{format(post.createdAt)}</span>
           </div>
           {isCurrentUser && (
-            // <div className="postTopRight" onClick={handleDelete}>
-            //   <RemoveCircleOutlineOutlined />
-            // </div>
+            <div className="postTopRight" onClick={handleDelete}>
+              <RemoveCircleOutlineOutlined style={{"color":"gray"}}/>
+            </div>
+            )}
+       </div>
 
-<div>
-<IconButton onClick={handleClick}>
-        <MoreVert />
-      </IconButton>
-      <Menu
-        id="menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-      >
-        <MenuItem onClick={handleDelete}>
-        <RemoveCircleOutlineOutlined /> Delete
-        </MenuItem>
-      </Menu>
-      </div> 
-
-          )}
-        </div>
         <div className="postCenter">
           <span className="postText">{post?.description}</span>
           <img className="postImg" src={post.image ? publicFolder + post.image : ''} alt="" />
@@ -199,15 +183,15 @@ const Post = ({ post }) => {
 
         </div>
         <form onSubmit={handleCommentSubmit}>
-      <input
-        type="text"
-        placeholder="Add a comment..."
-        value={commentText}
-        onChange={(e) => setCommentText(e.target.value)}
-        className="commentInput"
-      />
-      <button type="submit" className="postCommentButton">Post</button>
-    </form>
+          <input
+            type="text"
+            placeholder="Add a comment..."
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            className="commentInput"
+          />
+          <button type="submit" className="postCommentButton">Post</button>
+        </form>
         {showComments && (
           <div className="postButtonRight" onClick={handleShowComments}>
 

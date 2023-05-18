@@ -9,6 +9,7 @@ const io = require("socket.io")(8900, {
 
 let users = [];
 let comments = [];
+//let unreadCount = 0;
 
 
 const addUser = (userId, socketId) => {
@@ -48,6 +49,17 @@ io.on("connection", (socket) => {
         }
     })
 
+    // Send current number of unread messages
+    //socket.emit("unreadCount", unreadCount)
+
+    // Receive updates on unread messages from client
+    // socket.on("updateUnreadCount", (newCount) => {
+    //     unreadCount = newCount;
+
+    //     // Send updated count of unreads messages to all clients
+    //     io.emit("unreadCount", unreadCount);
+    // })
+
     // Send and get comments
     socket.on("addComment", async ({ postId, comment }) => {
         if (!comments[postId]) {
@@ -62,7 +74,6 @@ io.on("connection", (socket) => {
     socket.on("getComments", (postId) => {
         io.to(socket.id).emit("comments", comments[postId] || []);
       });
-
 
     // Disconnection  function
     socket.on("disconnect", () => {

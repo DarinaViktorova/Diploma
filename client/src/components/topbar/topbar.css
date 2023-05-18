@@ -31,7 +31,7 @@
     width: 90%;
     height: 30px;
     background-color: #fff;
-    border-radius: 30px;
+    border-radius: 3px;
     display: flex;
     align-items: center;
 }
@@ -50,6 +50,25 @@
     outline: none;
 }
 
+.searchButton {
+    background-color: #f0e6ef;
+    border: none;
+    border-radius: 4px;
+    color: #6f4a8e;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 6px 14px;
+    margin-left: 20px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .searchButton:hover {
+    background-color: #d3c3d9;
+  }
+
 .topbarRight {
     flex: 4;
     display: flex;
@@ -63,6 +82,7 @@
 }
 
 .topbarLink {
+    color: yellow;
     margin-left: 10px;
     font-size: 14px;
 }
