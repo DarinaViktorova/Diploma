@@ -14,10 +14,6 @@ const CommentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // avatar: {
-    //     type: String,
-    //     required: true
-    // }
 }) 
 
 const PostSchema = new mongoose.Schema({

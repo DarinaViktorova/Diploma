@@ -7,7 +7,8 @@ import ChatOnline from "../../components/chatOnline/ChatOnline";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import {getUserConversations} from "../../api/conversations.js";
+import {getUserMessages, postSendMessage} from "../../api/messages.js";
 import {io} from "socket.io-client";
 
 
@@ -21,11 +22,6 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
-
-  // const [username, setUsername] = useState("");
-  // const [error, setError] = useState("");
-
  
   const scrollRef = useRef();
   const socket = useRef();
@@ -57,7 +53,7 @@ const Chat = () => {
   useEffect(() => {
     const getConversations = async () => {
       try {
-        const response = await axios.get("/conversations/" + user._id);
+        const response = await getUserConversations(user._id);
         setConversations(response.data);
       } catch (error) {
         console.log(error);
@@ -69,7 +65,7 @@ const Chat = () => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const response = await axios.get("/messages/" + currentChat?._id);
+        const response = await getUserMessages(currentChat?._id)
         setMessages(response.data);
       } catch (error) {
         console.log(error);
@@ -79,7 +75,6 @@ const Chat = () => {
   }, [currentChat]);
   
  
-/**----------------------------------------------------------------------- */
   const handleSend = async (e) => {
     e.preventDefault();
     const message = {
@@ -99,7 +94,7 @@ const Chat = () => {
     });
 
     try {
-      const response = await axios.post("/messages", message);
+      const response = await postSendMessage(message);
       setMessages([...messages, response.data]);
       setNewMessage("");
     } catch (err) {

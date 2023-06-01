@@ -45,21 +45,6 @@ router.post("/login", async (request, response) => {
     }
 });
 
-// Login ver 1
-// router.post("/login", async (request, response) => {
-//     try {
-//         const user = await User.findOne({ email: request.body.email });
-//         !user && response.status(404).json("User isn't exist");
-
-//         const validPassword = await bcrypt.compare(request.body.password, user.password);
-//         !validPassword && response.status(404).json("Wrong password");
-
-//         response.status(200).json(user);
-//     } catch (error) {
-//         response.status(500).json(error);
-//     }
-// })
-
 // Logout
 router.get("/logout", (request, response) => {
     response.cookie("userToken", null, {

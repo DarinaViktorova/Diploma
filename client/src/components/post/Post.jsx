@@ -1,14 +1,11 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { MoreVert, FavoriteRounded, Edit, RemoveCircleOutlineOutlined } from "@material-ui/icons";
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
+import { FavoriteRounded, RemoveCircleOutlineOutlined } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { format } from "timeago.js";
-import axios from "axios";
 import "./post.css";
 import { AuthContext } from "../../context/AuthContext";
 import { io } from "socket.io-client";
+import { deletePost, getLikes, getPost, putComment, getComments, putLike } from "../../api/posts";
 
 
 const Post = ({ post }) => {
@@ -26,13 +23,6 @@ const Post = ({ post }) => {
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [deletePost, setDeletePost] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
 
   /* Likes */
 
@@ -42,7 +32,7 @@ const Post = ({ post }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await axios.get(`/users?userId=${post.userId}`);
+      const response = await getLikes(post.userId);
       setUser(response.data);
     }
     fetchUser();
@@ -50,7 +40,7 @@ const Post = ({ post }) => {
 
   const likeHandler = () => {
     try {
-      axios.put("/posts/" + post._id + "/like", { userId: currentUser._id });
+      putLike(post._id, currentUser._id);
     } catch (error) { }
     setLike(isLiked ? like - 1 : like + 1);
     setIsLiked(!isLiked);
@@ -59,7 +49,8 @@ const Post = ({ post }) => {
   /* Comments */
 
   /**Show */
-  const handleShowComments = () => {
+  const handleShowComments = (e) => {
+    e.preventDefault();
     setShowComments((shown) => !shown);
   };
 
@@ -72,19 +63,17 @@ const Post = ({ post }) => {
 
   useEffect(() => {
     const fetchComments = async () => {
-      const response = await axios.get(`/posts/${post._id}/comments`);
+      const response = await getComments(post._id);
       setComment(response.data);
     }
     fetchComments();
   }, [post._id, arrivalComment]);
 
+
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/posts/${post._id}/comments`, {
-        userId: currentUser._id,
-        text: commentText,
-      });
+      await putComment(post._id, currentUser._id, commentText);
       socket.current.emit("addComment", {
         postId: post._id,
       });
@@ -101,9 +90,7 @@ const Post = ({ post }) => {
     // Проверяем, что текущий пользователь является автором поста
     if (currentUser._id === post.userId) {
       try {
-        await axios.delete(`/posts/${post._id}`, {
-          data: { userId: currentUser._id },
-        });
+        await deletePost(post._id, currentUser._id);
         // Если удаление прошло успешно, удаляем пост из состояния (state)
         setIsDeleted(true);
         window.location.reload();
@@ -120,7 +107,7 @@ const Post = ({ post }) => {
   useEffect(() => {
     if (isDeleted) {
       // Загружаем обновленные данные из сервера и обновляем состояние компонента
-      axios.get(`/posts/${post._id}`)
+      getPost(post._id)
         .then(res => {
           // Обновляем состояние компонента, чтобы он перерендерился с новыми данными
           setIsDeleted(false);
@@ -160,10 +147,10 @@ const Post = ({ post }) => {
           </div>
           {isCurrentUser && (
             <div className="postTopRight" onClick={handleDelete}>
-              <RemoveCircleOutlineOutlined style={{"color":"gray"}}/>
+              <RemoveCircleOutlineOutlined style={{ "color": "gray" }} />
             </div>
-            )}
-       </div>
+          )}
+        </div>
 
         <div className="postCenter">
           <span className="postText">{post?.description}</span>
@@ -201,12 +188,11 @@ const Post = ({ post }) => {
                   to={`/profile/${c.userId.username}`}
                   style={{ textDecoration: "none", color: "black" }}
                 >
-                  {/* <img
-            src={c.userId.avatar}
-            alt={c.userId.username}
-            className="commentAvatar"
-          /> */}
-                  <span className="commentUserName">{c.userId.username} : </span>
+                  <img
+                    src={c.userId.avatar ? publicFolder + c.userId.avatar : publicFolder + "people/default_avatar.jpg"}
+                    className="commentAvatar"
+                  />
+                  <span className="commentUserName"> {c.userId.username} : </span>
                   <span className="commentText">{c.text}</span>
                 </Link>
               </div>

@@ -47,6 +47,10 @@
 
 .rightbarInfo{
   margin-bottom: 30px;
+  background-color: rgb(162, 222, 255);
+  border-radius: 12px;
+  padding: 5px;
+  margin-right: 40%;
 }
 
 .rightbarInfoItem{
@@ -80,7 +84,7 @@
   width: 100px;
   height: 100px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 50%;
 }
 
 .rightbarFollowingName {
@@ -91,8 +95,8 @@
   margin-top: 30px;
   margin-bottom: 10px;
   border: none;
-  background-color: #1872f2;
-  color: white;
+  background-color: rgb(147, 217, 255);
+  color: blue;
   border-radius: 5px;
   padding: 5px 10px;
   display: flex;

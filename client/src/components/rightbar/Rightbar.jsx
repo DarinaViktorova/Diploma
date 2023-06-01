@@ -1,49 +1,44 @@
 import "./rightbar.css";
-import { Users } from "../../dummyData";
-import Online from "../online/Online";
 import { useEffect, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { Add, Remove, Message } from "@material-ui/icons";
+import {getFriendsList, putUserUnfollow, putUserFollow} from "../../api/users.js";
+import {postUserConversation} from "../../api/conversations.js";
 
+const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
 
 const Rightbar = ({ user }) => {
 
-  const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
   const {user: currentUser, dispatch} = useContext(AuthContext);
-  const [followed, setFollowed] = useState(currentUser?.followings?.includes(user?.id));
-  const [isLoading, setIsLoading] = useState(false);
   const history = useHistory();
+
+  const isFollowed = () => {
+    return currentUser?.followings?.includes(user?._id);
+  }
 
   useEffect(() => {
     const getFriends = async () => {
       try {
-        const friendList = await axios.get("/users/friends/" + user._id);
+        if (!user._id) return;
+        const friendList = await getFriendsList(user._id);
         setFriends(friendList.data)
       } catch (error) {
         console.log(error)
       }
     };
     getFriends();
-  }, [user]);
+  }, [user._id]);
 
   const handleClickFollow = async () => {
     try {
-      if (followed) {
-        await axios.put(`/users/${user._id}/unfollow`, {
-          userId: currentUser._id,
-        });
-        await dispatch({ type: "UNFOLLOW", payload: user._id });
-        setFollowed(false);
+      if (isFollowed()) {
+        await putUserUnfollow(user._id, currentUser._id);
+        dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
-        await axios.put(`/users/${user._id}/follow`, {
-          userId: currentUser._id,
-        });
-        await dispatch({ type: "FOLLOW", payload: user._id });
-        setFollowed(true);
+        await putUserFollow(user._id, currentUser._id);
+        dispatch({ type: "FOLLOW", payload: user._id });
       }
     } catch (err) {
       console.log(err);
@@ -52,34 +47,11 @@ const Rightbar = ({ user }) => {
   
   const handleClickMessage = async () => {
     try {
-      const response = await axios.post("/conversations", {
-        senderId: currentUser._id,
-        receiverId: user._id,
-      });
+      const response = await postUserConversation(user._id, currentUser._id);
       history.push(`/chat/messages/${response.data._id}`);
     } catch (error) {
       console.log(error);
     }
-  }
-
-  const HomeRightbar = () => {
-    return (
-      <>
-        <div className="birthdayContainer">
-          <img src="/assets/gift-boxes.png" alt="" className="birthdayImg" />
-          <span className="birthdayText">
-            <b>Jasmine Jordan</b> and <b>3 others friends</b> have a Birthday today!
-          </span>
-        </div>
-        <img src="/assets/ad.jpg" alt="" className="rightbarAd" />
-        <h4 className="rightbarTitle">Online friends</h4>
-        <ul className="rightbarFriendList">
-          {Users.map(u => (
-            <Online key={u.id} user={u} />
-          ))}
-        </ul>
-      </>
-    )
   }
 
   const ProfileRightbar = () => {
@@ -88,24 +60,26 @@ const Rightbar = ({ user }) => {
         {user.username !== currentUser.username && (
           <>
             <button className="rightbarFollowButton" onClick={handleClickFollow}>
-              {followed ? "Unfollow" : "Follow"}
-              {followed ? <Remove /> : <Add />}
+              {isFollowed() ? "Unfollow" : "Follow"}
             </button>
             <button className="rightbarFollowButton" onClick={handleClickMessage}> 
-              Message <Message />
+              Message
             </button>
           </>
         )}
-        <span className="rightbarTitle"> {user.username} info</span>
+  
+        <span className="rightbarTitle"> Information about {user.username}</span>
         <div className="rightbarInfo">
           <div className="rightbarInfoItem">
             <span className="rightbarInfoKey">City:</span>
             <span className="rightbarInfoValue">{user.city}</span>
           </div>
+          
           <div className="rightbarInfoItem">
             <span className="rightbarInfoKey">From:</span>
             <span className="rightbarInfoValue">{user.from}</span>
           </div>
+
           <div className="rightbarInfoItem">
             <span className="rightbarInfoKey">Relationship:</span>
             <span className="rightbarInfoValue">
@@ -115,20 +89,21 @@ const Rightbar = ({ user }) => {
             </span>
           </div>
         </div>
+
         <h4 className="rightbarTitle"> User followings</h4>
         <div className="rightbarFollowings">
           { friends.map((friend) => (
-            <Link key={friend.id} to={"/profile/" + friend.username} style={{textDecoration: "none"}}>
-            <div className="rightbarFollowing">
-              <img src={friend.avatar 
-                  ? publicFolder + friend.avatar
-                  : publicFolder + "people/default_avatar.jpg"
-                } 
-                alt="" 
-                className="rightbarFollowingImg"
-              />
-              <span className="rightbarFollowingName">{friend.username}</span>
-            </div>
+            <Link key={friend._id} to={"/profile/" + friend.username} style={{textDecoration: "none"}}>
+              <div className="rightbarFollowing">
+                <img src={friend.avatar 
+                    ? publicFolder + friend.avatar
+                    : publicFolder + "people/default_avatar.jpg"
+                  } 
+                  alt="" 
+                  className="rightbarFollowingImg"
+                />
+                <span className="rightbarFollowingName">{friend.username}</span>
+              </div>
             </Link>
           ))}
         </div>
@@ -139,7 +114,7 @@ const Rightbar = ({ user }) => {
   return (
     <div className="rightbar">
       <div className="rightbarWrapper">
-        {user ? <ProfileRightbar /> : <HomeRightbar/>}
+        <ProfileRightbar />
       </div>
     </div>
   )

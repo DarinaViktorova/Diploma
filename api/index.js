@@ -12,21 +12,19 @@ const messageRoute = require("./routes/messages");
 const multer = require("multer");
 const path = require('path');
 
-
-
 dotenv.config();
 
 mongoose.connect(process.env.MONGODB_URL, {useNewUrlParser: true,  useUnifiedTopology: true}, () => {
     console.log("Connected to MongoDb ...");
 });
 
-// console.log(__dirname);
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 // Middleware
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
+app.disable('etag');
 
 const storage = multer.diskStorage({
   destination: (request, file, cb) => {
@@ -49,6 +47,7 @@ app.post("/api/upload", upload.single("file"), (request, response) => {
   }
 })
 
+// Routes
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postsRoute);

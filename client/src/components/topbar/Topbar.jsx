@@ -1,36 +1,21 @@
 import "./topbar.css";
 import { Link } from "react-router-dom";
-import { Search, HomeOutlined, MailOutline, ExitToAppRounded } from "@material-ui/icons";
-import { useContext, useState, useRef } from "react";
+import { HomeOutlined, MailOutline, ExitToAppRounded } from "@material-ui/icons";
+import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { logoutCall } from '../../apiCalls'
-import axios from "axios";
-import {io} from "socket.io-client";
-import { useEffect } from "react";
+import { getUserByUsername } from "../../api/users";
 
+const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
 
 const Topbar = () => {
 
     const { user, dispatch } = useContext(AuthContext);
+
     const [searchQuery, setSearchQuery] = useState("");
-   // const [unreadCount, setUnreadCount] = useState(0);
-    const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
+
     const history = useHistory();
-
-
-    // const socket = useRef();
-
-    // useEffect(() => {
-    //     socket.current = io("ws://localhost:8900");
-    //     socket.current.on("unreadCount", (newCount) => {
-    //         setUnreadCount(newCount);
-    //     })
-    // }, []);
-
-    // const updateUnreadCount = (newCount) => {
-
-    // }
 
 
     const handleLogout = () => {
@@ -42,7 +27,7 @@ const Topbar = () => {
         e.preventDefault();
         if (searchQuery !== "") {
             try {
-                const response = await axios.get(`/users?username=${searchQuery}`);
+                const response = await getUserByUsername(searchQuery);
                 const searchedUser = searchQuery;
                 if (searchedUser === response.data.username) {
                   history.push("/profile/" + searchedUser);
@@ -60,9 +45,9 @@ const Topbar = () => {
                     <span className="logo">SpeakUp</span>
                 </Link>
             </div>
+
             <div className="topbarCenter">
                 <form className="searchBar">
-                    {/* <Search className="searchIcon" /> */}
                     <input
                         type="text"
                         className="searchInput"
@@ -72,23 +57,22 @@ const Topbar = () => {
                         <button type="submit" className="searchButton" onClick={handleSearch}>Search</button>
                 </form>
             </div>
+
             <div className="topbarRight">
                 <div className="topbarLinks">
-                    <Link to="/" style={{ textDecoration: "none", color: "yellow", cursor: "pointer" }}>
+                    <Link to="/" style={{ textDecoration: "none", color: "blue", cursor: "pointer" }}>
                         <HomeOutlined />
                     </Link>
                 </div>
-                <div className="topbarIcons">
 
+                <div className="topbarIcons">
                     <Link to="/chat" style={{ textDecoration: "none", color: "white", cursor: "pointer"}}>
                         <div className="topbarIconItem">
-                            <MailOutline style={{"color":"yellow"}}/>
-                            <span className="topbarIconBadge">1</span>
+                            <MailOutline style={{"color":"blue"}}/>
                         </div>
                     </Link>
-
-
                 </div>
+
                 <Link to={`/profile/${user.username}`}>
                     <img src={user.avatar
                         ? publicFolder + user.avatar
@@ -99,11 +83,11 @@ const Topbar = () => {
                 </Link>
 
                 <div className="topbarIconItem" onClick={handleLogout}>
-                    <ExitToAppRounded style={{"color":"yellow"}}/>
+                    <ExitToAppRounded style={{"color":"blue"}}/>
                 </div>
-
             </div>
         </div>
+
     )
 }
 

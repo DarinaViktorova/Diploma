@@ -29,7 +29,8 @@
     object-fit: cover;
   }
   
-  .postUserName {
+  .postUserName,
+  .commentUserName {
     font-size: 15px;
     font-weight: 500;
     margin: 0 10px;
@@ -102,6 +103,14 @@
 
   .postCommentButton:hover {
     background-color: #d3c3d9;
+  }
+  
+  .commentAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid white;
   }
 
   .comment {

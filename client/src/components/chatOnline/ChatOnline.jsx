@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import "./chatOnline.css";
 import axios from "axios";
 
-const ChatOnline = ({ onlineUsers, currentId, setCurrentChat }) => {
+const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
+
+const ChatOnline = ({ onlineUsers, currentId }) => {
 
   const [friends, setFriends] = useState([]);
   const [onlineFriends, setOnlineFriends] = useState([]);
-  const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER;
 
   useEffect(() => {
     const getFriends = async () => {
@@ -19,7 +20,7 @@ const ChatOnline = ({ onlineUsers, currentId, setCurrentChat }) => {
   useEffect(() => {
     setOnlineFriends(friends.filter((f) => onlineUsers.includes(f._id)));
   }, [friends, onlineUsers]);
-  console.log(friends)
+  // console.log(friends)
   return (
     <div className="chatOnline">
       <h1>Online</h1>
@@ -34,6 +35,7 @@ const ChatOnline = ({ onlineUsers, currentId, setCurrentChat }) => {
                   : `${publicFolder}people/default_avatar.jpg`}
                 alt="" 
                 className="chatOnlineImg" />
+
               <div className="chatOnlineBadge"></div>
             </div>
             <span className="chatOnlineName">{online.username}</span>

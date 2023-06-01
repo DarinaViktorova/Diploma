@@ -59,17 +59,6 @@ router.get("/", async (request, response) => {
     }
 })
 
-// 1st get a user?
-// router.get("/:id", async (request, response) => { /* THE CODE FROM PART 1 */
-//     try{
-//         const user = await User.findById(request.params.id);
-//         // here we don't show password and updatedAd, we show other info (avatar, username etc)
-//         const {password, updatedAt, ...other} = user._doc;
-//         response.status(200).json(other);
-//     } catch (error) {
-//         response.status(500).json(error);
-//     }
-// })
 
 // Get friends
 router.get("/friends/:userId", async (request, response) => {
@@ -87,7 +76,7 @@ router.get("/friends/:userId", async (request, response) => {
         })
         response.status(200).json(friendList);
     } catch (error) {
-        response.status(500).json
+        response.status(500).json(error);
     }
 })
 
